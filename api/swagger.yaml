@@ -1,0 +1,55 @@
+basePath: /api/v1
+definitions:
+  v1.Error:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  v1.GetFileResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      size:
+        type: integer
+      url:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: Place-API Service.
+  version: 0.1.0
+paths:
+  /api/v1/file/{id}:
+    get:
+      description: Method returns file meta and temporary url to download
+      operationId: GetFile
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetFileResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.Error'
+      summary: Get file info
+      tags:
+      - file_api
+swagger: "2.0"

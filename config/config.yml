@@ -1,0 +1,15 @@
+app:
+  name: "place-api"
+  version: "0.1.0"
+
+http:
+  port: 8080
+  max_multipart_size_mib: 8
+
+
+logger:
+  level: "debug"
+
+postgres:
+  dsn: "postgres://postgres@postgres:5432/place-api?sslmode=disable" # ONLY FOR TESTING
+  pool_max: 3
