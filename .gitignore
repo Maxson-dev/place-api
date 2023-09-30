@@ -27,3 +27,5 @@ vendor/
 
 # Binary deps
 bin/
+
+config.yml

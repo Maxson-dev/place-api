@@ -6,10 +6,14 @@ http:
   port: 8080
   max_multipart_size_mib: 8
 
-
 logger:
   level: "debug"
 
 postgres:
   dsn: "postgres://postgres@postgres:5432/place-api?sslmode=disable" # ONLY FOR TESTING
   pool_max: 3
+
+s3_ceph:
+  host: "http://hb.vkcs.cloud"
+  access_key: "<insert your value here>"
+  secret_key: "<insert your value here>"

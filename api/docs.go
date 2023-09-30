@@ -15,6 +15,51 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/file": {
+            "post": {
+                "description": "Method for uploading file to storage",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file_api"
+                ],
+                "summary": "Upload file",
+                "operationId": "PostFile",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Body with file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PostFileResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/file/{id}": {
             "get": {
                 "description": "Method returns file meta and temporary url to download",
@@ -42,8 +87,61 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1.GetFileResponse"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/place": {
+            "post": {
+                "description": "Method for object creation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "place_api"
+                ],
+                "summary": "Create object",
+                "operationId": "PostPlace",
+                "parameters": [
+                    {
+                        "description": "Create object",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.PostPlaceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PostPlaceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/v1.Error"
                         }
@@ -83,6 +181,33 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.PostFileResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.PostPlaceRequest": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "integer"
+                },
+                "lng": {
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.PostPlaceResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
                     "type": "string"
                 }
             }

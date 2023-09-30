@@ -18,7 +18,8 @@ type GetFileResponse struct {
 // @Produce     json
 // @Param       id path string true "File ID"
 // @Success     200 {object} GetFileResponse
+// @Failure     400 {object} Error
 // @Failure     404 {object} Error
 // @Failure     500 {object} Error
-// @Router      /api/v1/file/{id} [get].
+// @Router      /api/v1/file/{id} [get]
 func (c *controller) GetFile(ctx *gin.Context) {}

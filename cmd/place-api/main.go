@@ -8,6 +8,7 @@ import (
 	"github.com/Maxson-dev/place-api/config"
 	"github.com/Maxson-dev/place-api/internal/controller"
 	"github.com/Maxson-dev/place-api/internal/pkg/logger"
+	fileusecase "github.com/Maxson-dev/place-api/internal/usecase/file"
 	"github.com/Maxson-dev/place-api/migration"
 	"github.com/gin-gonic/gin"
 )
@@ -31,6 +32,8 @@ func main() {
 
 	engine.Use(gin.Logger())
 	engine.Use(gin.Recovery())
+
+	fileUC := fileusecase.New(fileusecase.Config{})
 
 	app := controller.New(engine, controller.HTTPConfig{
 		Port:                cfg.HTTP.Port,

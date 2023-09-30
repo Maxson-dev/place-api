@@ -1,9 +1,20 @@
 package v1
 
-type fileHandler interface{}
+import (
+	"context"
+	"mime/multipart"
+)
 
-type controller struct{}
+type fileUC interface {
+	Upload(ctx context.Context, files []*multipart.FileHeader) ([]string, error)
+}
 
-func New() *controller {
-	return &controller{}
+type controller struct {
+	fileUC fileUC
+}
+
+func New(fileUC fileUC) *controller {
+	return &controller{
+		fileUC: fileUC,
+	}
 }

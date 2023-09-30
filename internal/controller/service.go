@@ -36,7 +36,7 @@ func New(engine *gin.Engine, cfg HTTPConfig) *service {
 		apiV1 := api.Group("/v1/")
 		{
 			{
-				apiV1.POST("/file")
+				apiV1.POST("/file", v1.PostFile)
 				apiV1.GET("/file/:id", v1.GetFile)
 			}
 			{
