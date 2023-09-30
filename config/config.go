@@ -19,11 +19,12 @@ type config struct {
 		Dsn     string `yaml:"dsn"`
 	} `yaml:"postgres"`
 	S3 struct {
-		Host      string `yaml:"host"`
-		Region    string `yaml:"msk"`
-		Bucket    string `yaml:"bucket"`
-		AccessKey string `yaml:"access_key"`
-		SecretKey string `yaml:"secret_key"`
+		Host                   string `yaml:"host"`
+		Region                 string `yaml:"region"`
+		Bucket                 string `yaml:"bucket"`
+		AccessKey              string `yaml:"access_key"`
+		SecretKey              string `yaml:"secret_key"`
+		DownloadUrlLifetimeMin int64  `yaml:"download_url_lifetime_min"`
 	} `yaml:"s3_ceph"`
 	Logger struct {
 		Level string `yaml:"level"`

@@ -5,7 +5,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-     # - ./.artifacts/pg-data:/var/lib/postgresql/data
+      - ./.artifacts/pg-data:/var/lib/postgresql/data
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust" # ONLY FOR TESTING

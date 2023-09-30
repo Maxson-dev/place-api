@@ -26,7 +26,7 @@ type PostFileResponse struct {
 func (c *controller) PostFile(ctx *gin.Context) {
 	form, err := ctx.MultipartForm()
 	if err != nil {
-		c.Error(ctx, "invalid payload", http.StatusBadRequest)
+		c.Error(ctx, err, "invalid payload", http.StatusBadRequest)
 		return
 	}
 
@@ -34,7 +34,7 @@ func (c *controller) PostFile(ctx *gin.Context) {
 
 	fileIDs, err := c.fileUC.Upload(ctx, files)
 	if err != nil {
-		c.Error(ctx, "failed to upload file", http.StatusInternalServerError)
+		c.Error(ctx, err, "failed to upload file", http.StatusInternalServerError)
 		return
 	}
 

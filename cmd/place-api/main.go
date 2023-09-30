@@ -9,9 +9,10 @@ import (
 	"github.com/Maxson-dev/place-api/internal/controller"
 	v1 "github.com/Maxson-dev/place-api/internal/controller/v1"
 	filrepo "github.com/Maxson-dev/place-api/internal/infra/database/file"
+	db "github.com/Maxson-dev/place-api/internal/infra/database/pgx-wrapper"
 	"github.com/Maxson-dev/place-api/internal/infra/s3"
 	"github.com/Maxson-dev/place-api/internal/pkg/logger"
-	fileusecase "github.com/Maxson-dev/place-api/internal/usecase/file"
+	fileuc "github.com/Maxson-dev/place-api/internal/usecase/file"
 	"github.com/Maxson-dev/place-api/migration"
 	"github.com/gin-gonic/gin"
 )
@@ -31,12 +32,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	engine := gin.New()
-
-	engine.Use(gin.Logger())
-	engine.Use(gin.Recovery())
-
 	fileRepo := filrepo.New()
+
+	masterNode, err := db.New(
+		ctx,
+		cfg.Postgres.Dsn,
+		db.Config{
+			PoolMax: cfg.Postgres.PoolMax,
+		},
+	)
+	if err != nil {
+		slog.Error("db init error: %s", err)
+		os.Exit(1)
+	}
 
 	s3Client, err := s3.New(s3.Config{
 		Region:    cfg.S3.Region,
@@ -49,15 +57,31 @@ func main() {
 		os.Exit(1)
 	}
 
-	fileUC := fileusecase.New(cfg.S3.Bucket, s3Client, fileRepo)
+	fileUC := fileuc.New(
+		masterNode,
+		s3Client,
+		fileRepo,
+		fileuc.Config{
+			StorageBucket:          cfg.S3.Bucket,
+			DownloadUrlLifetimeMin: cfg.S3.DownloadUrlLifetimeMin,
+		},
+	)
 
 	v1api := v1.New(fileUC)
 
-	httpcfg := controller.HTTPConfig{
-		Port:                cfg.HTTP.Port,
-		MaxMultipartSizeMib: cfg.HTTP.MaxMultipartSizeMib,
-	}
-	app := controller.New(engine, httpcfg, v1api)
+	engine := gin.New()
+
+	engine.Use(gin.Logger())
+	engine.Use(gin.Recovery())
+
+	app := controller.New(
+		engine,
+		v1api,
+		controller.HTTPConfig{
+			Port:                cfg.HTTP.Port,
+			MaxMultipartSizeMib: cfg.HTTP.MaxMultipartSizeMib,
+		},
+	)
 
 	if err := app.Run(); err != nil {
 		slog.Error("app run error: %s", err)

@@ -27,7 +27,7 @@ type service struct {
 // @version     0.1.0
 // @host        localhost:8080
 // @BasePath  	/api/v1
-func New(engine *gin.Engine, cfg HTTPConfig, v1 v1API) *service {
+func New(engine *gin.Engine, v1 v1API, cfg HTTPConfig) *service {
 	srv := &service{
 		cfg:    cfg,
 		engine: engine,

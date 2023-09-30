@@ -9,12 +9,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *client) GetSignedDownloadURL(bucket string, fileName string, contentType string, expire time.Duration) (string, error) {
+func (c *client) GetSignedDownloadURL(bucket, key, name, contentType string, expire time.Duration) (string, error) {
 	req, _ := c.s3.GetObjectRequest(&s3.GetObjectInput{
 		Bucket:                     aws.String(bucket),
-		Key:                        aws.String(fileName),
+		Key:                        aws.String(key),
 		ResponseContentType:        aws.String(contentType),
-		ResponseContentDisposition: aws.String(fmt.Sprintf(`attachment; filename="%s"`, fileName)),
+		ResponseContentDisposition: aws.String(fmt.Sprintf(`attachment; filename="%s"`, name)),
 	})
 	signURL, err := req.Presign(expire)
 	if err != nil {

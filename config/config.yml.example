@@ -19,3 +19,4 @@ s3_ceph:
   bucket: "placeapi"
   access_key: "<insert your value here>"
   secret_key: "<insert your value here>"
+  download_url_lifetime_min: 30

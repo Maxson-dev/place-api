@@ -49,3 +49,15 @@ go-fmt:	## runs go fmt
 .PHONY: new-migration
 new-migration: ## create new migration
 	$(GOOSE) -dir migration/migrations create migration sql
+
+.PHONY: up
+up: ## run app
+	docker-compose up -d
+
+.PHONY: down
+down: ## down app
+	docker-compose down
+
+.PHONY: build-up
+build-up: ## build and run app
+	docker-compose up --build -d
