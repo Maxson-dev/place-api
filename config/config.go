@@ -18,6 +18,13 @@ type config struct {
 		PoolMax int64  `yaml:"pool_max"`
 		Dsn     string `yaml:"dsn"`
 	} `yaml:"postgres"`
+	S3 struct {
+		Host      string `yaml:"host"`
+		Region    string `yaml:"msk"`
+		Bucket    string `yaml:"bucket"`
+		AccessKey string `yaml:"access_key"`
+		SecretKey string `yaml:"secret_key"`
+	} `yaml:"s3_ceph"`
 	Logger struct {
 		Level string `yaml:"level"`
 	}

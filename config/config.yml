@@ -15,5 +15,7 @@ postgres:
 
 s3_ceph:
   host: "http://hb.vkcs.cloud"
+  region: "msk"
+  bucket: "placeapi"
   access_key: "<insert your value here>"
   secret_key: "<insert your value here>"

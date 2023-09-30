@@ -12,10 +12,8 @@ type Config struct {
 	Region   string
 	Endpoint string
 
-	Credentials struct {
-		AccessKey string
-		SecretKey string
-	}
+	AccessKey string
+	SecretKey string
 }
 
 type client struct {
@@ -32,8 +30,8 @@ func New(cfg Config) (*client, error) {
 			S3ForcePathStyle: aws.Bool(true),
 			Region:           aws.String(cfg.Region),
 			Credentials: credentials.NewStaticCredentials(
-				cfg.Credentials.AccessKey,
-				cfg.Credentials.SecretKey,
+				cfg.AccessKey,
+				cfg.SecretKey,
 				"",
 			),
 		},

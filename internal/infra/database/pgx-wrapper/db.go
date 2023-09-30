@@ -11,12 +11,12 @@ type Config struct {
 	PoolMax int64
 }
 
-type db struct {
+type dbwrap struct {
 	cfg  Config
 	pool *pgxpool.Pool
 }
 
-func New(ctx context.Context, dsn string, cfg Config) (*db, error) {
+func New(ctx context.Context, dsn string, cfg Config) (*dbwrap, error) {
 	dsn = fmt.Sprintf("%s&pool_max_conns=%d", dsn, cfg.PoolMax)
 
 	pool, err := pgxpool.New(ctx, dsn)
@@ -24,5 +24,5 @@ func New(ctx context.Context, dsn string, cfg Config) (*db, error) {
 		return nil, err
 	}
 
-	return &db{cfg: cfg, pool: pool}, nil
+	return &dbwrap{cfg: cfg, pool: pool}, nil
 }

@@ -6,7 +6,7 @@ import (
 	"embed"
 	"log/slog"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // load postgres driver
 	"github.com/pressly/goose/v3"
 )
 

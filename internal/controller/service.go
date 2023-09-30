@@ -3,9 +3,13 @@ package controller
 import (
 	"fmt"
 
-	controllerV1 "github.com/Maxson-dev/place-api/internal/controller/v1"
 	"github.com/gin-gonic/gin"
 )
+
+type v1API interface {
+	PostFile(ctx *gin.Context)
+	GetFile(ctx *gin.Context)
+}
 
 type HTTPConfig struct {
 	Port                int64
@@ -23,13 +27,11 @@ type service struct {
 // @version     0.1.0
 // @host        localhost:8080
 // @BasePath  	/api/v1
-func New(engine *gin.Engine, cfg HTTPConfig) *service {
+func New(engine *gin.Engine, cfg HTTPConfig, v1 v1API) *service {
 	srv := &service{
 		cfg:    cfg,
 		engine: engine,
 	}
-
-	v1 := controllerV1.New()
 
 	api := srv.engine.Group("/api/")
 	{

@@ -5,6 +5,7 @@ import (
 	"io"
 
 	domain "github.com/Maxson-dev/place-api/internal/domain/file"
+	"github.com/Maxson-dev/place-api/internal/infra/database"
 )
 
 type s3Client interface {
@@ -12,23 +13,20 @@ type s3Client interface {
 }
 
 type fileRepo interface {
-	Save(ctx context.Context, file domain.File) error
-}
-
-type Config struct {
-	StorageBucket string
+	Save(ctx context.Context, q database.Queryable, file domain.File) error
 }
 
 type usecase struct {
-	cfg      Config
-	s3Client s3Client
-	fileRepo fileRepo
+	storageBucket string
+	s3Client      s3Client
+	fileRepo      fileRepo
+	db            database.PGX
 }
 
-func New(cfg Config, s3Client s3Client, fileRepo fileRepo) *usecase {
+func New(storageBucket string, s3Client s3Client, fileRepo fileRepo) *usecase {
 	return &usecase{
-		cfg:      cfg,
-		s3Client: s3Client,
-		fileRepo: fileRepo,
+		storageBucket: storageBucket,
+		s3Client:      s3Client,
+		fileRepo:      fileRepo,
 	}
 }

@@ -35,14 +35,14 @@ func (u *usecase) upload(ctx context.Context, f *multipart.FileHeader) (string, 
 		return "", errors.Wrap(err, "f.Open")
 	}
 
-	url, err := u.s3Client.UploadFile(u.cfg.StorageBucket, f.Filename, octetStream, body)
+	url, err := u.s3Client.UploadFile(u.storageBucket, f.Filename, octetStream, body)
 	if err != nil {
 		return "", errors.Wrap(err, "u.s3Client.UploadFile")
 	}
 
-	header := file.New(u.cfg.StorageBucket, f.Filename, ulid.Make().String(), url, f.Size)
+	header := file.New(u.storageBucket, f.Filename, ulid.Make().String(), url, f.Size)
 
-	err = u.fileRepo.Save(ctx, header)
+	err = u.fileRepo.Save(ctx, u.db, header)
 	if err != nil {
 		return "", errors.Wrap(err, "u.fileRepo.Save")
 	}

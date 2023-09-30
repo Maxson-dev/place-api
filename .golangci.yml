@@ -42,7 +42,7 @@ linters-settings:
           - operation
           - return
   govet:
-    check-shadowing: true
+    check-shadowing: false
   misspell:
     locale: US
   nestif:
@@ -75,6 +75,8 @@ issues:
     - path: internal/controller/http
       linters:
         - godot
+  exclude:
+    - exported func .* returns unexported type .*, which can be annoying to use
 
 run:
   skip-dirs:

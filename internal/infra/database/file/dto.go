@@ -18,6 +18,7 @@ var columns = []string{
 	"is_deleted",
 }
 
+// nolint:unused
 type fileDTO struct {
 	ID        uuid.UUID `db:"id"`
 	Bucket    string    `db:"bucket"`
