@@ -61,3 +61,8 @@ down: ## down app
 .PHONY: build-up
 build-up: ## build and run app
 	docker-compose up --build -d
+
+
+.PHONY: test
+test: ## run tests
+	go test -v ./...

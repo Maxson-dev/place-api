@@ -10,9 +10,11 @@ import (
 	v1 "github.com/Maxson-dev/place-api/internal/controller/v1"
 	filrepo "github.com/Maxson-dev/place-api/internal/infra/database/file"
 	db "github.com/Maxson-dev/place-api/internal/infra/database/pgx-wrapper"
+	placerepo "github.com/Maxson-dev/place-api/internal/infra/database/place"
 	"github.com/Maxson-dev/place-api/internal/infra/s3"
 	"github.com/Maxson-dev/place-api/internal/pkg/logger"
 	fileuc "github.com/Maxson-dev/place-api/internal/usecase/file"
+	placeuc "github.com/Maxson-dev/place-api/internal/usecase/place"
 	"github.com/Maxson-dev/place-api/migration"
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +34,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fileRepo := filrepo.New()
+	// ____________INFRA______________
 
 	masterNode, err := db.New(
 		ctx,
@@ -57,17 +59,28 @@ func main() {
 		os.Exit(1)
 	}
 
+	// ____________REPO______________
+
+	fileRepo := filrepo.New()
+	placeRepo := placerepo.New()
+
+	// ____________USECASE______________
+
 	fileUC := fileuc.New(
 		masterNode,
 		s3Client,
 		fileRepo,
 		fileuc.Config{
 			StorageBucket:          cfg.S3.Bucket,
-			DownloadUrlLifetimeMin: cfg.S3.DownloadUrlLifetimeMin,
+			DownloadURLLifetimeMin: cfg.S3.DownloadURLLifetimeMin,
 		},
 	)
 
-	v1api := v1.New(fileUC)
+	placeUC := placeuc.New(masterNode, placeRepo)
+
+	// ____________CONTROLLER______________
+
+	v1api := v1.New(fileUC, placeUC)
 
 	engine := gin.New()
 

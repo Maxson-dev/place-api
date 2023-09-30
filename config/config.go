@@ -24,7 +24,7 @@ type config struct {
 		Bucket                 string `yaml:"bucket"`
 		AccessKey              string `yaml:"access_key"`
 		SecretKey              string `yaml:"secret_key"`
-		DownloadUrlLifetimeMin int64  `yaml:"download_url_lifetime_min"`
+		DownloadURLLifetimeMin int64  `yaml:"download_url_lifetime_min"`
 	} `yaml:"s3_ceph"`
 	Logger struct {
 		Level string `yaml:"level"`

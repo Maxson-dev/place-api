@@ -1,14 +1,19 @@
 package v1
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 type PostPlaceRequest struct {
-	Lat int64 `json:"lat"`
-	Lng int64 `json:"lng"`
+	Name string  `json:"name" binding:"required"`
+	Lat  float64 `json:"lat" binding:"required"`
+	Lng  float64 `json:"lng" binding:"required"`
 }
 
 type PostPlaceResponse struct {
-	ID string `json:"id"`
+	ID int64 `json:"id"`
 }
 
 // PostPlace
@@ -24,4 +29,18 @@ type PostPlaceResponse struct {
 // @Failure     400 {object} Error
 // @Failure     500 {object} Error
 // @Router      /api/v1/place [post]
-func (c *controller) PostPlace(ctx *gin.Context) {}
+func (c *controller) PostPlace(ctx *gin.Context) {
+	var req PostPlaceRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		c.Error(ctx, err, "invalid object", http.StatusBadRequest)
+		return
+	}
+
+	id, err := c.placeUC.Create(ctx, req.Name, req.Lat, req.Lng)
+	if err != nil {
+		c.Error(ctx, err, "failed to create object", http.StatusInternalServerError)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, PostPlaceResponse{ID: id})
+}

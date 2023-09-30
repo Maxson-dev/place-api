@@ -1,5 +1,6 @@
 package database
 
 const (
-	FileTable = "file"
+	TableFile  = "file"
+	TablePlace = "place"
 )

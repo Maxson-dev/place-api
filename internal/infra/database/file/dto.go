@@ -11,7 +11,7 @@ import (
 
 var baseSelect = database.PSQL.
 	Select(columns...).
-	From(database.FileTable)
+	From(database.TableFile)
 
 var columns = []string{
 	"id",

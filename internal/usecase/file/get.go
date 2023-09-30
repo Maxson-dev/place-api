@@ -18,8 +18,11 @@ func (u *usecase) Get(ctx context.Context, id uuid.UUID) (domain.File, error) {
 	url, err := u.s3Client.GetSignedDownloadURL(
 		file.Bucket, file.Key, file.Name,
 		octetStream,
-		time.Duration(u.cfg.DownloadUrlLifetimeMin)*time.Minute,
+		time.Duration(u.cfg.DownloadURLLifetimeMin)*time.Minute,
 	)
+	if err != nil {
+		return domain.File{}, errors.Wrap(err, "u.s3Client.GetSignedDownloadURL")
+	}
 
 	file.URL = url
 

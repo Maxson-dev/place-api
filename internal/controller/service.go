@@ -9,6 +9,7 @@ import (
 type v1API interface {
 	PostFile(ctx *gin.Context)
 	GetFile(ctx *gin.Context)
+	PostPlace(ctx *gin.Context)
 }
 
 type HTTPConfig struct {
@@ -42,7 +43,7 @@ func New(engine *gin.Engine, v1 v1API, cfg HTTPConfig) *service {
 				apiV1.GET("/file/:id", v1.GetFile)
 			}
 			{
-				apiV1.POST("/place")
+				apiV1.POST("/place", v1.PostPlace)
 				apiV1.GET("/place/:id")
 				apiV1.GET("/place/:id/distance")
 			}

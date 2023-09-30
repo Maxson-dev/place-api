@@ -11,7 +11,7 @@ import (
 
 func (r *repo) Save(ctx context.Context, q database.Queryable, file domain.File) error {
 	qb := database.PSQL.
-		Insert(database.FileTable).
+		Insert(database.TableFile).
 		Columns(columns...).
 		Values(
 			file.ID,

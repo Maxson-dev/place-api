@@ -13,12 +13,18 @@ type fileUC interface {
 	Upload(ctx context.Context, files []*multipart.FileHeader) ([]string, error)
 }
 
-type controller struct {
-	fileUC fileUC
+type placeUC interface {
+	Create(ctx context.Context, name string, lat, lng float64) (int64, error)
 }
 
-func New(fileUC fileUC) *controller {
+type controller struct {
+	fileUC  fileUC
+	placeUC placeUC
+}
+
+func New(fileUC fileUC, placeUC placeUC) *controller {
 	return &controller{
-		fileUC: fileUC,
+		fileUC:  fileUC,
+		placeUC: placeUC,
 	}
 }

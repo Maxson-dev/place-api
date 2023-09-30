@@ -22,7 +22,7 @@ type fileRepo interface {
 
 type Config struct {
 	StorageBucket          string
-	DownloadUrlLifetimeMin int64
+	DownloadURLLifetimeMin int64
 }
 
 type usecase struct {
