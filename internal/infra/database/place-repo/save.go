@@ -1,4 +1,4 @@
-package place
+package place_repo
 
 import (
 	"context"

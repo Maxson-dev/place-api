@@ -1,4 +1,4 @@
-package place
+package file_repo
 
 type repo struct{}
 

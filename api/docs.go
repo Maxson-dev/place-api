@@ -15,6 +15,53 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/event": {
+            "post": {
+                "description": "Method for adding a scheduled event",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "event_api"
+                ],
+                "summary": "Create scheduled event",
+                "operationId": "PostEvent",
+                "parameters": [
+                    {
+                        "description": "Scheduled event",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.PostEventRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PostEventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/file": {
             "post": {
                 "description": "Method for uploading file to storage",
@@ -154,6 +201,116 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/place/{id}": {
+            "get": {
+                "description": "Method returns place by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "place_api"
+                ],
+                "summary": "Get place",
+                "operationId": "GetPlace",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Place ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GetPlaceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/place/{id}/distance": {
+            "get": {
+                "description": "Method returns distance between object and point",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "place_api"
+                ],
+                "summary": "Get distance",
+                "operationId": "GetDistance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Place ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "latitude",
+                        "name": "lat",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "longitude",
+                        "name": "lng",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GetDistanceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Error"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -165,6 +322,17 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.GetDistanceResponse": {
+            "type": "object",
+            "properties": {
+                "km": {
+                    "type": "number"
+                },
+                "mi": {
+                    "type": "number"
                 }
             }
         },
@@ -185,22 +353,79 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.PostFileResponse": {
+        "v1.GetPlaceResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lat": {
+                    "type": "number"
+                },
+                "lng": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.PostEventRequest": {
+            "type": "object",
+            "required": [
+                "event_type",
+                "payload"
+            ],
+            "properties": {
+                "event_type": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "v1.PostEventResponse": {
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.PostFileResponse": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
         "v1.PostPlaceRequest": {
             "type": "object",
+            "required": [
+                "lat",
+                "lng",
+                "name"
+            ],
             "properties": {
                 "lat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "lng": {
-                    "type": "integer"
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -208,7 +433,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         }

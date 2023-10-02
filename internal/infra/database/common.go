@@ -32,6 +32,12 @@ type Sqlizer interface {
 	ToSql() (sql string, args []interface{}, err error)
 }
 
+type RawQuery string
+
+func (r RawQuery) ToSql() (string, []interface{}, error) {
+	return string(r), nil, nil
+}
+
 type Execer interface {
 	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
 }

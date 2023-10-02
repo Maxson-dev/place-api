@@ -7,6 +7,13 @@ definitions:
       status:
         type: string
     type: object
+  v1.GetDistanceResponse:
+    properties:
+      km:
+        type: number
+      mi:
+        type: number
+    type: object
   v1.GetFileResponse:
     properties:
       id:
@@ -18,22 +25,60 @@ definitions:
       url:
         type: string
     type: object
-  v1.PostFileResponse:
+  v1.GetPlaceResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      lat:
+        type: number
+      lng:
+        type: number
+      name:
+        type: string
+    type: object
+  v1.PostEventRequest:
+    properties:
+      event_type:
+        type: string
+      payload:
+        items:
+          type: integer
+        type: array
+    required:
+    - event_type
+    - payload
+    type: object
+  v1.PostEventResponse:
     properties:
       id:
-        type: string
+        type: integer
+    type: object
+  v1.PostFileResponse:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
     type: object
   v1.PostPlaceRequest:
     properties:
       lat:
-        type: integer
+        type: number
       lng:
-        type: integer
+        type: number
+      name:
+        type: string
+    required:
+    - lat
+    - lng
+    - name
     type: object
   v1.PostPlaceResponse:
     properties:
       id:
-        type: string
+        type: integer
     type: object
 host: localhost:8080
 info:
@@ -41,6 +86,37 @@ info:
   title: Place-API Service.
   version: 0.1.0
 paths:
+  /api/v1/event:
+    post:
+      consumes:
+      - application/json
+      description: Method for adding a scheduled event
+      operationId: PostEvent
+      parameters:
+      - description: Scheduled event
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PostEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.PostEventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.Error'
+      summary: Create scheduled event
+      tags:
+      - event_api
   /api/v1/file:
     post:
       consumes:
@@ -132,6 +208,80 @@ paths:
           schema:
             $ref: '#/definitions/v1.Error'
       summary: Create object
+      tags:
+      - place_api
+  /api/v1/place/{id}:
+    get:
+      description: Method returns place by id
+      operationId: GetPlace
+      parameters:
+      - description: Place ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetPlaceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.Error'
+      summary: Get place
+      tags:
+      - place_api
+  /place/{id}/distance:
+    get:
+      description: Method returns distance between object and point
+      operationId: GetDistance
+      parameters:
+      - description: Place ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: latitude
+        in: query
+        name: lat
+        required: true
+        type: string
+      - description: longitude
+        in: query
+        name: lng
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetDistanceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.Error'
+      summary: Get distance
       tags:
       - place_api
 swagger: "2.0"

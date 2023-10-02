@@ -3,13 +3,20 @@ package controller
 import (
 	"fmt"
 
+	_ "github.com/Maxson-dev/place-api/api" // swagger docs
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type v1API interface {
 	PostFile(ctx *gin.Context)
 	GetFile(ctx *gin.Context)
 	PostPlace(ctx *gin.Context)
+	GetPlace(ctx *gin.Context)
+	GetDistance(ctx *gin.Context)
+	PostEvent(ctx *gin.Context)
+	GetHealth(ctx *gin.Context)
 }
 
 type HTTPConfig struct {
@@ -44,18 +51,21 @@ func New(engine *gin.Engine, v1 v1API, cfg HTTPConfig) *service {
 			}
 			{
 				apiV1.POST("/place", v1.PostPlace)
-				apiV1.GET("/place/:id")
-				apiV1.GET("/place/:id/distance")
+				apiV1.GET("/place/:id", v1.GetPlace)
+				apiV1.GET("/place/:id/distance", v1.GetDistance)
 			}
 			{
-				apiV1.POST("/event")
+				apiV1.POST("/event", v1.PostEvent)
 			}
 			{
-				apiV1.GET("/health")
+				apiV1.GET("/health", v1.GetHealth)
 			}
 		}
 
 	}
+
+	// TODO swagger only for dev env
+	srv.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return srv
 }

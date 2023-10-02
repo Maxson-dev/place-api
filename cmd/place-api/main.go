@@ -8,11 +8,13 @@ import (
 	"github.com/Maxson-dev/place-api/config"
 	"github.com/Maxson-dev/place-api/internal/controller"
 	v1 "github.com/Maxson-dev/place-api/internal/controller/v1"
-	filrepo "github.com/Maxson-dev/place-api/internal/infra/database/file"
+	eventrepo "github.com/Maxson-dev/place-api/internal/infra/database/event-repo"
+	filrepo "github.com/Maxson-dev/place-api/internal/infra/database/file-repo"
 	db "github.com/Maxson-dev/place-api/internal/infra/database/pgx-wrapper"
-	placerepo "github.com/Maxson-dev/place-api/internal/infra/database/place"
+	placerepo "github.com/Maxson-dev/place-api/internal/infra/database/place-repo"
 	"github.com/Maxson-dev/place-api/internal/infra/s3"
 	"github.com/Maxson-dev/place-api/internal/pkg/logger"
+	eventuc "github.com/Maxson-dev/place-api/internal/usecase/event"
 	fileuc "github.com/Maxson-dev/place-api/internal/usecase/file"
 	placeuc "github.com/Maxson-dev/place-api/internal/usecase/place"
 	"github.com/Maxson-dev/place-api/migration"
@@ -30,7 +32,7 @@ func main() {
 
 	err := migration.Migrate(ctx, cfg.Postgres.Dsn)
 	if err != nil {
-		slog.Error("migration error: %s", err)
+		slog.Error("migration error", "err", err)
 		os.Exit(1)
 	}
 
@@ -44,7 +46,7 @@ func main() {
 		},
 	)
 	if err != nil {
-		slog.Error("db init error: %s", err)
+		slog.Error("db init error", "err", err)
 		os.Exit(1)
 	}
 
@@ -55,7 +57,7 @@ func main() {
 		SecretKey: cfg.S3.SecretKey,
 	})
 	if err != nil {
-		slog.Error("s3 init error: %s", err)
+		slog.Error("s3 init error", "err", err)
 		os.Exit(1)
 	}
 
@@ -63,6 +65,7 @@ func main() {
 
 	fileRepo := filrepo.New()
 	placeRepo := placerepo.New()
+	eventRepo := eventrepo.New(masterNode)
 
 	// ____________USECASE______________
 
@@ -78,9 +81,11 @@ func main() {
 
 	placeUC := placeuc.New(masterNode, placeRepo)
 
+	eventUC := eventuc.New(masterNode, eventRepo)
+
 	// ____________CONTROLLER______________
 
-	v1api := v1.New(fileUC, placeUC)
+	v1api := v1.New(fileUC, placeUC, eventUC)
 
 	engine := gin.New()
 
@@ -97,7 +102,7 @@ func main() {
 	)
 
 	if err := app.Run(); err != nil {
-		slog.Error("app run error: %s", err)
+		slog.Error("app run error", "err", err)
 		os.Exit(1)
 	}
 }

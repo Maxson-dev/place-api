@@ -9,6 +9,7 @@ import (
 
 type placeRepo interface {
 	Save(ctx context.Context, q database.Queryable, p place.Attributes) (int64, error)
+	FindOne(ctx context.Context, q database.Queryable, id int64) (place.Place, error)
 }
 
 type usecase struct {
