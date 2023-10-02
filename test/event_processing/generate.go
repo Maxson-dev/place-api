@@ -27,7 +27,7 @@ func main() {
 				wg.Done()
 				<-sem
 			}()
-			_, err := http.Post("http://localhost:8080/api/v1/events", "application/json", r)
+			_, err := http.Post("http://localhost:8080/api/v1/event", "application/json", r)
 			if err != nil {
 				fmt.Println(err)
 			}
