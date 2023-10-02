@@ -12,13 +12,13 @@ func (p *poller) processEvents(events <-chan event.ScheduledEvent, failed chan<-
 	for evt := range events {
 		var err error
 		switch evt.Payload.Type() {
-		case event.ScheduledEventTypeSendNotification:
+		case event.SendNotification:
 			err = p.processor.ProcessSendNotificationEvent(context.TODO(), evt)
 		}
 		if err != nil {
 			slog.Error("failed to process event", "event_id", evt.ID.String(), "err", err.Error())
 
-			evt.Status = event.ScheduledEventStatusFailed
+			evt.Status = event.EventStatusFailed
 			evt.Attempt++
 			evt.Datetime = evt.Datetime.Add(p.cfg.RetryDelay * time.Duration(evt.Attempt))
 

@@ -10,9 +10,9 @@ import (
 
 type ScheduledEvent struct {
 	ID        uuid.UUID
-	Status    ScheduledEventStatus
+	Status    Status
 	Datetime  time.Time
-	Payload   ScheduledEventPayload
+	Payload   Payload
 	CreatedAt time.Time
 	Attempt   int64
 }
@@ -20,7 +20,7 @@ type ScheduledEvent struct {
 // New scheduledEvent constructor
 func New(datetime time.Time, eventType string, payload []byte) (ScheduledEvent, error) {
 	switch eventType {
-	case string(ScheduledEventTypeSendNotification):
+	case string(SendNotification):
 		var p SendNotificationPayload
 		err := json.Unmarshal(payload, &p)
 		if err != nil {
@@ -28,7 +28,7 @@ func New(datetime time.Time, eventType string, payload []byte) (ScheduledEvent, 
 		}
 		return ScheduledEvent{
 			ID:        uuid.New(),
-			Status:    ScheduledEventStatusNew,
+			Status:    EventStatusNew,
 			Datetime:  datetime,
 			Payload:   p,
 			Attempt:   0,
@@ -38,22 +38,22 @@ func New(datetime time.Time, eventType string, payload []byte) (ScheduledEvent, 
 	return ScheduledEvent{}, cerror.ErrBadInput
 }
 
-type ScheduledEventStatus uint8
+type Status uint8
 
 const (
-	ScheduledEventStatusNew ScheduledEventStatus = iota
-	ScheduledEventStatusInProgress
-	ScheduledEventStatusDone
-	ScheduledEventStatusFailed
+	EventStatusNew Status = iota
+	EventStatusInProgress
+	EventStatusDone
+	EventStatusFailed
 )
 
-type ScheduledEventType string
+type Type string
 
 const (
-	ScheduledEventTypeSendNotification ScheduledEventType = "SEND_NOTIFICATION" // whatever
+	SendNotification Type = "SEND_NOTIFICATION" // whatever
 )
 
-type ScheduledEventPayload interface {
+type Payload interface {
 	IsScheduledEventPayload()
-	Type() ScheduledEventType
+	Type() Type
 }

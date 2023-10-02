@@ -46,9 +46,9 @@ func (q *queue) Poll(ctx context.Context, max int64) ([]event.ScheduledEvent, er
 	returning *;`,
 		clms,
 		database.TableScheduledEvent,
-		event.ScheduledEventStatusNew,
+		event.EventStatusNew,
 		max,
-		event.ScheduledEventStatusInProgress,
+		event.EventStatusInProgress,
 	)
 
 	slog.Debug("polling scheduled events", "query", qb)
@@ -79,9 +79,9 @@ func mapToScheduledEvents(dtos []scheduledEventDTO) ([]event.ScheduledEvent, err
 
 func mapToScheduledEvent(dto scheduledEventDTO) (event.ScheduledEvent, error) {
 	var err error
-	var pld event.ScheduledEventPayload
-	switch event.ScheduledEventType(dto.Type) {
-	case event.ScheduledEventTypeSendNotification:
+	var pld event.Payload
+	switch event.Type(dto.Type) {
+	case event.SendNotification:
 		var p event.SendNotificationPayload
 		err = json.Unmarshal(dto.Payload, &p)
 		pld = p
@@ -92,7 +92,7 @@ func mapToScheduledEvent(dto scheduledEventDTO) (event.ScheduledEvent, error) {
 
 	return event.ScheduledEvent{
 		ID:        dto.ID,
-		Status:    event.ScheduledEventStatus(dto.Status),
+		Status:    event.Status(dto.Status),
 		Payload:   pld,
 		Datetime:  dto.Datetime,
 		Attempt:   dto.Attempt,

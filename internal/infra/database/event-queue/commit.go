@@ -14,7 +14,7 @@ import (
 func (q *queue) Commit(ctx context.Context, evtID uuid.UUID) error {
 	qb := database.PSQL.
 		Update(database.TableScheduledEvent).
-		Set("status", event.ScheduledEventStatusDone).
+		Set("status", event.EventStatusDone).
 		Set("updated_at", time.Now().UTC()).
 		Where(sq.Eq{"id": evtID.String()})
 

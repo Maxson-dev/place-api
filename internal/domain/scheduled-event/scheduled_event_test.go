@@ -12,7 +12,7 @@ func TestNew_Successful(t *testing.T) {
 	t.Parallel()
 
 	datetime := time.Now()
-	eventType := ScheduledEventTypeSendNotification
+	eventType := SendNotification
 	payload := []byte(`{"to": "example@example.com", "text": "Hello, world!"}`)
 
 	event, err := New(datetime, string(eventType), payload)
@@ -26,7 +26,7 @@ func TestNew_InvalidJSONPayload(t *testing.T) {
 	t.Parallel()
 
 	datetime := time.Now()
-	eventType := ScheduledEventTypeSendNotification
+	eventType := SendNotification
 	invalidPayload := []byte(`{"to": "example@example.com", "text": }`)
 
 	event, err := New(datetime, string(eventType), invalidPayload)
