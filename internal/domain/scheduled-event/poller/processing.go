@@ -23,6 +23,7 @@ func (p *poller) processEvents(events <-chan event.ScheduledEvent, failed chan<-
 			evt.Datetime = evt.Datetime.Add(p.cfg.RetryDelay * time.Duration(evt.Attempt))
 
 			failed <- evt
+			continue
 		}
 		err = p.queue.Commit(context.TODO(), evt.ID)
 		if err != nil {

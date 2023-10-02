@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 	"strings"
 
 	event "github.com/Maxson-dev/place-api/internal/domain/scheduled-event"
@@ -21,8 +20,9 @@ func (q *queue) Poll(ctx context.Context, max int64) ([]event.ScheduledEvent, er
 	if err != nil {
 		return nil, errors.Wrap(err, "could not begin transaction")
 	}
+	defer database.RollbackTx(ctx, tx)
 
-	lockq := fmt.Sprintf("select pg_advisory_xact_lock(%d)", murmur3.Sum64([]byte(pollEventsLock)))
+	lockq := fmt.Sprintf("select pg_advisory_xact_lock(%d)", murmur3.Sum32([]byte(pollEventsLock)))
 
 	// block other service instances from receiving from queue
 	_, err = tx.ExecRaw(ctx, lockq)
@@ -43,23 +43,26 @@ func (q *queue) Poll(ctx context.Context, max int64) ([]event.ScheduledEvent, er
 		set status = %d -- in progress
 	from batch
 	where scheduled_event.id = batch.id
-	returning *;`,
+	returning %s;`,
 		clms,
 		database.TableScheduledEvent,
 		event.EventStatusNew,
 		max,
 		event.EventStatusInProgress,
+		clms,
 	)
 
-	slog.Debug("polling scheduled events", "query", qb)
-
 	var dtos []scheduledEventDTO
-	err = q.db.Get(ctx, &dtos, database.RawQuery(qb))
+	err = q.db.Select(ctx, &dtos, database.RawQuery(qb))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return []event.ScheduledEvent{}, nil
 		}
 		return nil, errors.Wrap(err, qb)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return nil, errors.Wrap(err, "could not commit transaction")
 	}
 
 	return mapToScheduledEvents(dtos)

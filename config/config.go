@@ -26,6 +26,11 @@ type config struct {
 		SecretKey              string `yaml:"secret_key"`
 		DownloadURLLifetimeMin int64  `yaml:"download_url_lifetime_min"`
 	} `yaml:"s3_ceph"`
+	Event struct {
+		BatchSize     int64 `yaml:"batch_size"`
+		PoolSize      int64 `yaml:"pool_size"`
+		RetryDelayMin int64 `yaml:"retry_delay_min"`
+	}
 	Logger struct {
 		Level string `yaml:"level"`
 	}

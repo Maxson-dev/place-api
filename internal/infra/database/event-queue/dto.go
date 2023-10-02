@@ -7,14 +7,14 @@ import (
 )
 
 var columns = []string{
-	"id",
-	"status",
-	"type",
-	"payload",
-	"datetime",
-	"attempt",
-	"created_at",
-	"updated_at",
+	"scheduled_event.id",
+	"scheduled_event.status",
+	"scheduled_event.type",
+	"scheduled_event.payload",
+	"scheduled_event.datetime",
+	"scheduled_event.attempt",
+	"scheduled_event.created_at",
+	"scheduled_event.updated_at",
 }
 
 type scheduledEventDTO struct {

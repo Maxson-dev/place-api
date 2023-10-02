@@ -20,3 +20,8 @@ s3_ceph:
   access_key: "<insert your value here>"
   secret_key: "<insert your value here>"
   download_url_lifetime_min: 30
+
+event:
+  pool_size: 10
+  batch_size: 3
+  retry_delay_min: 1

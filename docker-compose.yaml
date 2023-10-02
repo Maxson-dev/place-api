@@ -17,7 +17,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "./wait_for_it.sh:/app/wait_for_it.sh"
+      - "./scripts/wait_for_it.sh:/app/wait_for_it.sh"
     depends_on:
       - postgres
     command: ["sh", "./wait_for_it.sh", "--", "./placeapi"]

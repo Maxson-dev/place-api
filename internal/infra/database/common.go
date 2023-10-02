@@ -2,10 +2,12 @@ package database
 
 import (
 	"context"
+	"log/slog"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/pkg/errors"
 )
 
 var PSQL = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
@@ -41,4 +43,14 @@ func (r RawQuery) ToSql() (string, []interface{}, error) {
 
 type Execer interface {
 	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
+}
+
+func RollbackTx(ctx context.Context, tx Tx) {
+	err := tx.Rollback(ctx)
+	if errors.Is(err, pgx.ErrTxClosed) {
+		return
+	}
+	if err != nil {
+		slog.Error("could not rollback transaction", "error", err)
+	}
 }

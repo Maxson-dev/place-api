@@ -2,7 +2,6 @@ package poller
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	event "github.com/Maxson-dev/place-api/internal/domain/scheduled-event"
@@ -27,17 +26,16 @@ type Config struct {
 }
 
 type poller struct {
-	stopCh  chan struct{}
-	runOnce *sync.Once
+	stopCh chan struct{}
 
 	cfg       Config
 	queue     queue
 	processor processor
 }
 
-func New(queue queue, processor processor) *poller {
+func New(queue queue, processor processor, cfg Config) *poller {
 	return &poller{
-		runOnce:   new(sync.Once),
+		cfg:       cfg,
 		stopCh:    make(chan struct{}),
 		queue:     queue,
 		processor: processor,

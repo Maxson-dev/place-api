@@ -4,11 +4,14 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/Maxson-dev/place-api/config"
 	"github.com/Maxson-dev/place-api/internal/controller"
 	v1 "github.com/Maxson-dev/place-api/internal/controller/v1"
-	eventrepo "github.com/Maxson-dev/place-api/internal/infra/database/event-queue"
+	"github.com/Maxson-dev/place-api/internal/domain/scheduled-event/poller"
+	"github.com/Maxson-dev/place-api/internal/domain/scheduled-event/processor"
+	eventqueue "github.com/Maxson-dev/place-api/internal/infra/database/event-queue"
 	filrepo "github.com/Maxson-dev/place-api/internal/infra/database/file-repo"
 	db "github.com/Maxson-dev/place-api/internal/infra/database/pgx-wrapper"
 	placerepo "github.com/Maxson-dev/place-api/internal/infra/database/place-repo"
@@ -61,11 +64,29 @@ func main() {
 		os.Exit(1)
 	}
 
+	eventQueue := eventqueue.New(masterNode)
+
 	// ____________REPO______________
 
 	fileRepo := filrepo.New()
 	placeRepo := placerepo.New()
-	eventRepo := eventrepo.New(masterNode)
+
+	// ____________DOMAIN______________
+
+	eventProcessor := processor.New()
+
+	eventPoller := poller.New(
+		eventQueue,
+		eventProcessor,
+		poller.Config{
+			BatchSize:  cfg.Event.BatchSize,
+			PoolSize:   cfg.Event.PoolSize,
+			RetryDelay: time.Duration(cfg.Event.RetryDelayMin) * time.Minute,
+		},
+	)
+
+	go eventPoller.Run()
+	defer eventPoller.Stop()
 
 	// ____________USECASE______________
 
@@ -81,7 +102,7 @@ func main() {
 
 	placeUC := placeuc.New(masterNode, placeRepo)
 
-	eventUC := eventuc.New(masterNode, eventRepo)
+	eventUC := eventuc.New(masterNode, eventQueue)
 
 	// ____________CONTROLLER______________
 

@@ -7,10 +7,6 @@ import (
 )
 
 func (p *poller) Run() {
-	go p.runOnce.Do(p.run)
-}
-
-func (p *poller) run() {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
 
