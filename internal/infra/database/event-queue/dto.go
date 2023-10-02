@@ -1,4 +1,4 @@
-package event_repo
+package event_queue
 
 import (
 	"time"

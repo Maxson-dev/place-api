@@ -8,7 +8,7 @@ import (
 	"github.com/Maxson-dev/place-api/config"
 	"github.com/Maxson-dev/place-api/internal/controller"
 	v1 "github.com/Maxson-dev/place-api/internal/controller/v1"
-	eventrepo "github.com/Maxson-dev/place-api/internal/infra/database/event-repo"
+	eventrepo "github.com/Maxson-dev/place-api/internal/infra/database/event-queue"
 	filrepo "github.com/Maxson-dev/place-api/internal/infra/database/file-repo"
 	db "github.com/Maxson-dev/place-api/internal/infra/database/pgx-wrapper"
 	placerepo "github.com/Maxson-dev/place-api/internal/infra/database/place-repo"

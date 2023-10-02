@@ -1,4 +1,4 @@
-package event_repo
+package event_queue
 
 import "github.com/Maxson-dev/place-api/internal/infra/database"
 
