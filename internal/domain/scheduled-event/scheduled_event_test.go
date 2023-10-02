@@ -1,4 +1,4 @@
-package scheduled_event
+package scheduledevent
 
 import (
 	"testing"

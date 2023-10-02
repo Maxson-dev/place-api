@@ -34,6 +34,7 @@ type Sqlizer interface {
 
 type RawQuery string
 
+// nolint:revive
 func (r RawQuery) ToSql() (string, []interface{}, error) {
 	return string(r), nil, nil
 }

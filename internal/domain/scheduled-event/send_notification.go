@@ -1,4 +1,4 @@
-package scheduled_event
+package scheduledevent
 
 type SendNotificationPayload struct {
 	To   string `json:"to"`

@@ -1,4 +1,4 @@
-package event_queue
+package eventqueue
 
 import (
 	"context"
@@ -16,8 +16,8 @@ import (
 
 const pollEventsLock = "poll_scheduled_events_lock"
 
-func (r *repo) Poll(ctx context.Context, max int64) ([]event.ScheduledEvent, error) {
-	tx, err := r.db.BeginTX(ctx, nil)
+func (q *queue) Poll(ctx context.Context, max int64) ([]event.ScheduledEvent, error) {
+	tx, err := q.db.BeginTX(ctx, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not begin transaction")
 	}
@@ -54,7 +54,7 @@ func (r *repo) Poll(ctx context.Context, max int64) ([]event.ScheduledEvent, err
 	slog.Debug("polling scheduled events", "query", qb)
 
 	var dtos []scheduledEventDTO
-	err = r.db.Get(ctx, &dtos, database.RawQuery(qb))
+	err = q.db.Get(ctx, &dtos, database.RawQuery(qb))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return []event.ScheduledEvent{}, nil

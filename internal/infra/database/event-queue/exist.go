@@ -1,4 +1,4 @@
-package event_queue
+package eventqueue
 
 import (
 	"context"
@@ -9,10 +9,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (r *repo) exists(ctx context.Context, evtID uuid.UUID) (bool, error) {
+func (q *queue) exists(ctx context.Context, evtID uuid.UUID) (bool, error) {
 	qb := fmt.Sprintf(`select exists(select 1 from %s where id=%s);`, database.TableScheduledEvent, evtID.String())
 	var exists bool
-	err := r.db.Get(ctx, &exists, database.RawQuery(qb))
+	err := q.db.Get(ctx, &exists, database.RawQuery(qb))
 	if err != nil {
 		return false, errors.Wrap(err, "r.db.Get")
 	}

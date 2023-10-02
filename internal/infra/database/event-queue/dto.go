@@ -1,4 +1,4 @@
-package event_queue
+package eventqueue
 
 import (
 	"time"

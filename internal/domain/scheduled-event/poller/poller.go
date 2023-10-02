@@ -3,6 +3,7 @@ package poller
 import (
 	"context"
 	"sync"
+	"time"
 
 	event "github.com/Maxson-dev/place-api/internal/domain/scheduled-event"
 	"github.com/google/uuid"
@@ -20,8 +21,9 @@ type processor interface {
 }
 
 type Config struct {
-	BatchSize int64
-	PoolSize  int64
+	BatchSize  int64
+	PoolSize   int64
+	RetryDelay time.Duration
 }
 
 type poller struct {

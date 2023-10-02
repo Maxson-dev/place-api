@@ -1,4 +1,4 @@
-package event_queue
+package eventqueue
 
 import (
 	"context"
@@ -12,13 +12,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (r *repo) Push(ctx context.Context, evt event.ScheduledEvent) error {
-	exists, err := r.exists(ctx, evt.ID)
+func (q *queue) Push(ctx context.Context, evt event.ScheduledEvent) error {
+	exists, err := q.exists(ctx, evt.ID)
 	if err != nil {
 		return errors.Wrap(err, "r.exists")
 	}
 	if !exists {
-		return r.save(ctx, r.db, evt)
+		return q.save(ctx, q.db, evt)
 	}
 
 	pld, err := json.Marshal(evt.Payload)
@@ -32,9 +32,10 @@ func (r *repo) Push(ctx context.Context, evt event.ScheduledEvent) error {
 		Set("attempt", evt.Attempt).
 		Set("datetime", evt.Datetime).
 		Set("payload", &pgtype.JSONB{Bytes: pld, Status: pgtype.Present}).
-		Set("updated_at", time.Now().UTC())
+		Set("updated_at", time.Now().UTC()).
+		Where(sq.Eq{"id": evt.ID.String()})
 
-	if _, err := r.db.Exec(ctx, qb); err != nil {
+	if _, err := q.db.Exec(ctx, qb); err != nil {
 		return errors.Wrap(err, sq.DebugSqlizer(qb))
 	}
 

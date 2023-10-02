@@ -1,4 +1,4 @@
-package file_repo
+package filerepo
 
 import (
 	"context"

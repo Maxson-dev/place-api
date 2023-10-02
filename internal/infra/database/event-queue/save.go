@@ -1,4 +1,4 @@
-package event_queue
+package eventqueue
 
 import (
 	"context"
@@ -11,11 +11,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (r *repo) Save(ctx context.Context, q database.Queryable, evt domain.ScheduledEvent) error {
-	return r.save(ctx, q, evt)
+func (q *queue) Save(ctx context.Context, ql database.Queryable, evt domain.ScheduledEvent) error {
+	return q.save(ctx, ql, evt)
 }
 
-func (r *repo) save(ctx context.Context, q database.Queryable, evt domain.ScheduledEvent) error {
+func (q *queue) save(ctx context.Context, ql database.Queryable, evt domain.ScheduledEvent) error {
 	pld, err := json.Marshal(evt.Payload)
 	if err != nil {
 		return errors.Wrap(err, "could not marshal payload")
@@ -44,7 +44,7 @@ func (r *repo) save(ctx context.Context, q database.Queryable, evt domain.Schedu
 			evt.CreatedAt,
 		)
 
-	if _, err := q.Exec(ctx, qb); err != nil {
+	if _, err := ql.Exec(ctx, qb); err != nil {
 		return errors.Wrap(err, sq.DebugSqlizer(qb))
 	}
 

@@ -1,13 +1,13 @@
-package event_queue
+package eventqueue
 
 import "github.com/Maxson-dev/place-api/internal/infra/database"
 
-type repo struct {
+type queue struct {
 	db database.PGX
 }
 
-func New(db database.PGX) *repo {
-	return &repo{
+func New(db database.PGX) *queue {
+	return &queue{
 		db: db,
 	}
 }

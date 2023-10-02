@@ -3,6 +3,7 @@ package poller
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	event "github.com/Maxson-dev/place-api/internal/domain/scheduled-event"
 )
@@ -15,6 +16,12 @@ func (p *poller) processEvents(events <-chan event.ScheduledEvent, failed chan<-
 			err = p.processor.ProcessSendNotificationEvent(context.TODO(), evt)
 		}
 		if err != nil {
+			slog.Error("failed to process event", "event_id", evt.ID.String(), "err", err.Error())
+
+			evt.Status = event.ScheduledEventStatusFailed
+			evt.Attempt++
+			evt.Datetime = evt.Datetime.Add(p.cfg.RetryDelay * time.Duration(evt.Attempt))
+
 			failed <- evt
 		}
 		err = p.queue.Commit(context.TODO(), evt.ID)
